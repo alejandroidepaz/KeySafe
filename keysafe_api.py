@@ -82,8 +82,6 @@ def register():
                 # redirect to the two-factor auth page, passing username in session
                 session['username'] = user.username
                 return redirect(url_for('two_factor_setup'))
- 
-                #return redirect(url_for('login_page'))
 
         return render_template('registration.html', title='Register', form=form)
 

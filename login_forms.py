@@ -72,7 +72,6 @@ class RegistrationForm(FlaskForm):
         if not password_verified:
             error_message = ""
             for key in results_dict.keys():
-                print(f'{key}: {results_dict[key]}')
                 if not results_dict[key]:
                     error_message += error_messages[key]
             

@@ -1,6 +1,6 @@
 from wtforms import StringField, PasswordField, SubmitField, validators
 from wtforms.validators import DataRequired, Length, Email, ValidationError, EqualTo
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 import re
 
 import mongodb_config as cfg
@@ -10,6 +10,7 @@ class LoginForm(FlaskForm):
     username = StringField('Username', validators = [DataRequired(), Length(min = 5, max = 35)], render_kw={"placeholder": "Username"})
     password = PasswordField('Password', validators = [DataRequired(), Length(min = 8, max = 35)], render_kw={"placeholder": "Password"})
     token = StringField('Token', validators=[DataRequired(), Length(min=6, max=6)], render_kw={"placeholder": "Your 6-Digit Token"})
+    recaptcha = RecaptchaField()
     submit = SubmitField('Login')
 
 class RegistrationForm(FlaskForm):

@@ -2,8 +2,9 @@
 {% extends "base.html" %}
 
 {% block page_content %}
-  <div class = "basic">
-    <p class="sign" align="center">Sign in</p>
+  <div style="text-align: center;" class = "basic">
+    <h1 class="sign">Sign in</h1>
+    <br>
     <form method = "POST" action = "" class="from1">
     {{ form.csrf_token }}
     <p>{{form.username(class_='un')}}</p>
@@ -12,7 +13,10 @@
     &nbsp;
     <p>{{form.token(class_='toke')}}</p>
     &nbsp;
-    <a>{{form.submit(class_='submit')}}</a>
+    <br>
+    <div style="display:inline-block;">{{ form.recaptcha }}</div>
+    <br></br>
+    <p><a>{{form.submit(class_='submit')}}</a></p>
     {% for error in form.submit.errors %}
     <span style="color: red;">[{{error}}]</span>
     {% endfor %}
@@ -25,7 +29,7 @@
         {% if messages %}
             <ul class=flashes>
             {% for message in messages %}
-                <li align="center">{{ message }}</li>
+              <span style="color: red;">[{{message}}]</span>
             {% endfor %}
             </ul>
         {% endif %}

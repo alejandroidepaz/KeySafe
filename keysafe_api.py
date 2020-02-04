@@ -21,6 +21,12 @@ login = LoginManager(app)
 login.init_app(app)
 bootstrap = Bootstrap(app)
 
+# reCAPTCHA API info
+app.config['RECAPTCHA_USE_SSL']= False
+app.config['RECAPTCHA_PUBLIC_KEY']= '6Lcm2NUUAAAAAL2GOOOkRV2WBELTUr0lX40D4DG7'
+app.config['RECAPTCHA_PRIVATE_KEY']= '6Lcm2NUUAAAAALUiGOg6C1H4PiKlo2KCGGXp69UH'
+app.config['RECAPTCHA_OPTIONS'] = {'theme':'white'}
+
 # Establish connection with MongoClient and iniitalize DataBase
 client = MongoClient("mongodb+srv://"+ cfg.mongodb["username"] + ":" + cfg.mongodb["password"] + "@" + cfg.mongodb["host"])
 userdb = client.KeySafe # the DB name is Whats_Kraken

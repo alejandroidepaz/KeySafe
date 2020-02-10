@@ -14,9 +14,15 @@ import os
 from pymongo import MongoClient
 import pymongo
 import mongodb_config as cfg
+import keyring
+
 
 app = Flask(__name__)
-app.secret_key = '123456789'
+app.secret_key = keyring.get_password("system", "secret_key")
+print("Hello" + str(keyring.get_password("system", "secret_key")))
+
+
+
 login = LoginManager(app)
 login.init_app(app)
 bootstrap = Bootstrap(app)

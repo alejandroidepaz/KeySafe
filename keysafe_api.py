@@ -18,9 +18,10 @@ import keyring
 
 
 app = Flask(__name__)
-app.secret_key = keyring.get_password("system", "secret_key")
-print("Hello" + str(keyring.get_password("system", "secret_key")))
 
+# gets the keyring for the secret key, which is stored by the system's 
+# secure storage eg macos keychain or windows credential locker
+app.secret_key = keyring.get_password("system", "secret_key")
 
 
 login = LoginManager(app)

@@ -24,6 +24,7 @@ app = Flask(__name__)
 app.secret_key = keyring.get_password("system", "secret_key")
 
 
+
 login = LoginManager(app)
 login.init_app(app)
 bootstrap = Bootstrap(app)
@@ -31,7 +32,7 @@ bootstrap = Bootstrap(app)
 # reCAPTCHA API info
 app.config['RECAPTCHA_USE_SSL']= False
 app.config['RECAPTCHA_PUBLIC_KEY']= '6Lcm2NUUAAAAAL2GOOOkRV2WBELTUr0lX40D4DG7'
-app.config['RECAPTCHA_PRIVATE_KEY']= '6Lcm2NUUAAAAALUiGOg6C1H4PiKlo2KCGGXp69UH'
+app.config['RECAPTCHA_PRIVATE_KEY']= keyring.get_password("system","recapthca_priv")
 app.config['RECAPTCHA_OPTIONS'] = {'theme':'white'}
 
 # Establish connection with MongoClient and iniitalize DataBase

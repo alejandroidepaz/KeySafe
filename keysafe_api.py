@@ -22,6 +22,7 @@ app = Flask(__name__)
 # gets the keyring for the secret key, which is stored by the system's 
 # secure storage eg macos keychain or windows credential locker
 app.secret_key = keyring.get_password("system", "secret_key")
+print(keyring.get_password("system", "secret_key"))
 
 
 
@@ -32,11 +33,13 @@ bootstrap = Bootstrap(app)
 # reCAPTCHA API info
 app.config['RECAPTCHA_USE_SSL']= False
 app.config['RECAPTCHA_PUBLIC_KEY']= '6Lcm2NUUAAAAAL2GOOOkRV2WBELTUr0lX40D4DG7'
-app.config['RECAPTCHA_PRIVATE_KEY']= keyring.get_password("system","recapthca_priv")
+app.config['RECAPTCHA_PRIVATE_KEY']= keyring.get_password("system","recaptcha_priv")
+
 app.config['RECAPTCHA_OPTIONS'] = {'theme':'white'}
 
 # Establish connection with MongoClient and iniitalize DataBase
 client = MongoClient("mongodb+srv://"+ cfg.mongodb["username"] + ":" + cfg.mongodb["password"] + "@" + cfg.mongodb["host"])
+
 userdb = client.KeySafe # the DB name is Whats_Kraken
 
 @app.errorhandler(404)

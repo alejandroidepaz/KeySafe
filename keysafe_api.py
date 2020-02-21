@@ -151,5 +151,13 @@ def logout():
 def index():
         return render_template("index.html")
 
+
+@app.route("/")
+@app.route("/add_password")
+@login_required
+def add_password():
+
+        return render_template("index.html")
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

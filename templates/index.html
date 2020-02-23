@@ -2,14 +2,75 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block page_content %}
+<div id="add_password_modal" class="text-center">
+                
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Add New Password Data</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form id="add_password_form" action="/add_password" method="POST">
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                              <label for="label">Label</label>
+                              <input id="label" type="text" class="form-control" name="label" aria-describedby="label" placeholder="e.g. Facebook" required>
+                          </div>
+                        </div>
+                        <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input id="password" type="text" class="form-control" name="password" aria-describedby="password" placeholder="Secure Password" required>
+                            </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                      <button id="add_password_btn" type="button" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div style="text-align: center;">
 
     <div class="jumbotron">
         <h1 class="display-4">Your Password Portal</h1>
         <p class="lead">View existing passwords or create new ones. </p>
         <hr class="my-4">
-        <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-        <a class="btn btn-primary btn-lg" href="#" role="button">Add New Password</a>
+        <div id="user_data_row" class="row">
+            <div class="labels_col">
+                <h4>Labels</h4>
+                <ol id="labels_list">
+                  {% for label in user_data %}
+                    <li id="{{label}}">{{label}}</li>
+                  {% endfor %}
+                </ol>
+              </div>
+              <div class="passwords_col">
+                <h4>Passwords</h4>
+                <ol id="passwords_list">
+                  {% for label in user_data %}
+                    <li id="{{label}}"><button class="view_password_btn" type="button" name="{{label}}">VIEW PASSWORD</button></li>
+                  {% endfor %}
+              
+                </ol>
+              </div>
+        </div>
+        <br>
+        <br>
+        <a class="btn btn-primary btn-lg" href="#" role="button" data-toggle="modal" data-target="#exampleModal">Add New Password</a>
       </div>
 
 </div>    

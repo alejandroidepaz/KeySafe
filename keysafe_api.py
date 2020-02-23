@@ -95,7 +95,8 @@ def register():
                 user.set_password(form.password.data)
 
                 userdb.user_login_credentials.insert_one({"username":user.username, "password":user.password_hash, "email":user.email, "otp_secret":user.otp_secret})
-                
+                userdb.user_password_labels.insert_one({"username":user.username, "labels":[]})
+
                 # redirect to the two-factor auth page, passing username in session
                 session['username'] = user.username
                 return redirect(url_for('two_factor_setup'))
@@ -152,15 +153,58 @@ def logout():
 @app.route("/index")
 @login_required
 def index():
-        return render_template("index.html")
+        user_data = []
+        try:
+                user_labels = userdb.user_password_labels.find_one({ "username": current_user.username})
+                if user_labels is not None:
+                        user_data = user_labels["labels"]
+        except Exception as e:
+                print("COULDN'T FIND USER DATA IN SYSTEM: ", e)
+
+        return render_template("index.html", user_data = user_data)
 
 
-@app.route("/")
-@app.route("/add_password")
+@app.route("/add_password", methods=["GET", "POST"])
 @login_required
 def add_password():
 
-        return render_template("index.html")
+        user_data = {}
+        if request.method == "POST":
+
+                data = request.form
+                data_dict = data.to_dict()
+                label = data_dict["label"]
+                try:
+                        userdb.user_password_labels.update_one({ "username": current_user.username}, { "$push": { "labels" : label } })
+                        user_labels = userdb.user_password_labels.find_one({ "username": current_user.username})
+                        user_data = user_labels["labels"]
+                except Exception as e:
+                        print("INSERTION FAILED: ", e)
+
+                # ENCRYPTION HERE
+                encrypted_pass = data_dict["password"]
+
+
+                try:
+                        userdb.secured_password_data.insert_one({"username":current_user.username, label:encrypted_pass})
+                except Exception as e:
+                        print("INSERTION FAILED: ", e)
+
+        return render_template("user_data.html", user_data=user_data)
+
+@app.route("/view_password", methods=["GET", "POST"])
+@login_required
+def view_password():
+
+        data_dict = {}
+        if request.method == "POST":
+
+                data = request.form
+                data_dict = data.to_dict()
+                label = data_dict["label"]
+                print("\nLABEL: ", label, "\n")
+
+        return data_dict
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

@@ -1,0 +1,7 @@
+.row {
+    display: flex;
+  }
+  
+  .labels_col, .passwords_col {
+    flex: 50%;
+  }

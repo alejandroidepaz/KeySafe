@@ -177,7 +177,7 @@ def add_password():
                 try:
                         userdb.user_password_labels.update_one({ "username": current_user.username}, { "$push": { "labels" : label } })
                         user_labels = userdb.user_password_labels.find_one({ "username": current_user.username})
-                        user_data = user_labels["labels"]
+                        user_data = {"user_data": user_labels["labels"]}
                 except Exception as e:
                         print("INSERTION FAILED: ", e)
 
@@ -190,7 +190,7 @@ def add_password():
                 except Exception as e:
                         print("INSERTION FAILED: ", e)
 
-        return render_template("user_data.html", user_data=user_data)
+        return user_data
 
 @app.route("/view_password", methods=["GET", "POST"])
 @login_required

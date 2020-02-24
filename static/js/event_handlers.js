@@ -24,7 +24,7 @@ $(document).ready(function(){
                     label_node.id = label;
                     $("#labels_list").append(label_node);
 
-                    let pass_node = document.createElement("LI")
+                    let pass_node = document.createElement("LI");
                     let pass_btn_node = document.createElement("button");
                     pass_btn_node.innerHTML = "VIEW PASSWORD";
                     pass_btn_node.name = label;

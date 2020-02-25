@@ -10,6 +10,14 @@ import onetimepass as otp
 import io
 import pyqrcode
 
+import bcrypt
+from cryptography.fernet import Fernet
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+
+#import ssl
+
 import os
 from pymongo import MongoClient
 import pymongo
@@ -85,20 +93,28 @@ def login_page():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+        print("start register")
         if current_user.is_authenticated:
                 return redirect(url_for('index'))
 
+        print("not authenticated")
         form = RegistrationForm()
+        print("recieve form")
         if form.validate_on_submit():
+                print("inside if")
+
 
                 user = User(form.username.data, form.email.data)
                 user.set_password(form.password.data)
+                print("after set password")
 
                 userdb.user_login_credentials.insert_one({"username":user.username, "password":user.password_hash, "email":user.email, "otp_secret":user.otp_secret})
                 userdb.user_password_labels.insert_one({"username":user.username, "labels":[]})
+                print("after inserts")
 
                 # redirect to the two-factor auth page, passing username in session
                 session['username'] = user.username
+                print("set session username variable")
                 return redirect(url_for('two_factor_setup'))
 
         return render_template('registration.html', title='Register', form=form)
@@ -183,10 +199,30 @@ def add_password():
 
                 # ENCRYPTION HERE
                 encrypted_pass = data_dict["password"]
+                hashed_master = current_user.password_hash.encode()
 
+                salt = b"Consistent Salt"
+
+                kdf = PBKDF2HMAC(
+                algorithm=hashes.SHA256(),
+                length=32,
+                salt=salt,
+                iterations=100000,
+                backend=default_backend())
+                
+                key = base64.urlsafe_b64encode(kdf.derive(hashed_master))
+
+                msg = encrypted_pass.encode()
+                f = Fernet(key)
+
+                encrypted = f.encrypt(msg)
+
+                print("WITHIN ADD")
+                print("Encrpytion: ", encrypted)
+                print("Key: ", key)
 
                 try:
-                        userdb.secured_password_data.insert_one({"username":current_user.username, label:encrypted_pass})
+                        userdb.secured_password_data.insert_one({"username":current_user.username, label:encrypted})
                 except Exception as e:
                         print("INSERTION FAILED: ", e)
 
@@ -202,7 +238,39 @@ def view_password():
                 data = request.form
                 data_dict = data.to_dict()
                 label = data_dict["label"]
-                print("\nLABEL: ", label, "\n")
+                # print("\nLABEL: ", label, "\n")
+
+                elm = userdb.secured_password_data.find({ "username": current_user.username})
+                count = userdb.secured_password_data.find({ "username": current_user.username}).count()
+
+                for i in range(count):
+                        if label in elm[i]:
+                                encryption = elm[i][label]
+                                break
+                # print(encryption)
+                hashed_master = current_user.password_hash.encode()
+
+                salt = b"Consistent Salt"
+
+                kdf = PBKDF2HMAC(
+                algorithm=hashes.SHA256(),
+                length=32,
+                salt=salt,
+                iterations=100000,
+                backend=default_backend())
+                
+                key = base64.urlsafe_b64encode(kdf.derive(hashed_master))
+
+                f = Fernet(key)
+
+                # print("WITHIN View")
+                # print("Encrpytion: ", encryption)
+                # print("Key: ", key)
+
+                decryption = f.decrypt(encryption)
+
+                # print(decryption.decode())
+                data_dict["decrpyted"] = decryption.decode()
 
         return data_dict
 

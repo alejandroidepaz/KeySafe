@@ -55,8 +55,7 @@ $(document).ready(function(){
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    alert("stop")
-                    alert("willi this change")
+                    alert("Your Password is: ", data.decrypted)
                 },
             });
         });

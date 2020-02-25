@@ -271,6 +271,7 @@ def view_password():
 
                 # print(decryption.decode())
                 data_dict["decrpyted"] = decryption.decode()
+                print(data_dict)
 
         return data_dict
 

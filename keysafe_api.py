@@ -16,19 +16,19 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-#import ssl
-
 import os
 from pymongo import MongoClient
 import pymongo
 import mongodb_config as cfg
 import keyring
 
+from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
 
 # gets the keyring for the secret key, which is stored by the system's 
 # secure storage eg macos keychain or windows credential locker
+#csrf = CSRFProtect(app)
 app.secret_key = keyring.get_password("system", "secret_key")
 
 login = LoginManager(app)
@@ -261,9 +261,10 @@ def view_password():
                 f = Fernet(key)
 
                 decryption = f.decrypt(encryption)
-                data_dict["decrpyted"] = decryption.decode()
+                data_dict["decrypted"] = decryption.decode()
 
         return data_dict
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
+    #csrf.init_app(app)

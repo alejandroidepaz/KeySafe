@@ -30,9 +30,6 @@ app = Flask(__name__)
 # gets the keyring for the secret key, which is stored by the system's 
 # secure storage eg macos keychain or windows credential locker
 app.secret_key = keyring.get_password("system", "secret_key")
-print(keyring.get_password("system", "secret_key"))
-
-
 
 login = LoginManager(app)
 login.init_app(app)
@@ -80,7 +77,7 @@ def login_page():
                 user = load_user(str(form.username.data))
                 
                 if user is None or not user.check_password(form.password.data) or not user.verify_totp(form.token.data):
-                        flash('Invalid username or password')
+                        flash('Invalid username, password or token. Please Try Again.')
                         return redirect(url_for('login_page'))
                 
                 login_user(user)
@@ -273,6 +270,9 @@ def view_password():
                 data_dict["decrpyted"] = decryption.decode()
                 print(data_dict)
 
+                decryption = f.decrypt(encryption)
+                data_dict["decrpyted"] = decryption.decode()
+                print(data_dict)
         return data_dict
 
 if __name__ == "__main__":

@@ -17,7 +17,6 @@ $(document).ready(function(){
                 processData: false,
                 success: function(data) {
                     $(".modal-header button").click();
-                    console.log("FINISHED AJAX REQUEST")
                     
                     let label_node = document.createElement("LI");
                     label_node.innerHTML = label;
@@ -27,9 +26,10 @@ $(document).ready(function(){
                     let pass_node = document.createElement("LI");
                     let pass_btn_node = document.createElement("button");
                     pass_btn_node.innerHTML = "VIEW PASSWORD";
-                    pass_btn_node.name = label;
                     pass_node.id = label;
-                    pass_btn_node.className - "view_password_btn";
+                    pass_btn_node.className = "view_password_btn";
+                    pass_btn_node.type = "button";
+                    pass_btn_node.name = label;
                     pass_node.appendChild(pass_btn_node);
                     $("#passwords_list").append(pass_node);
 
@@ -41,11 +41,12 @@ $(document).ready(function(){
 
     $(function() {
 
-        $('.view_password_btn').click(function() {
+        $('#passwords_list').on("click", ".view_password_btn", function() {
 
             let label = this.name;
             var form_data = new FormData();
-            form_data.append("label", label)
+            form_data.append("label", label);
+            console.log(label);
 
             $.ajax({
                 type: 'POST',

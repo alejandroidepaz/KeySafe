@@ -260,19 +260,9 @@ def view_password():
 
                 f = Fernet(key)
 
-                # print("WITHIN View")
-                # print("Encrpytion: ", encryption)
-                # print("Key: ", key)
-
-                decryption = f.decrypt(encryption)
-
-                # print(decryption.decode())
-                data_dict["decrpyted"] = decryption.decode()
-                print(data_dict)
-
                 decryption = f.decrypt(encryption)
                 data_dict["decrpyted"] = decryption.decode()
-                print(data_dict)
+
         return data_dict
 
 if __name__ == "__main__":

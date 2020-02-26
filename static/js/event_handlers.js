@@ -56,8 +56,7 @@ $(document).ready(function(){
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    console.log(data);
-                    alert("Your Password is: " + data.decrypted);
+                    alert("Your Password is: ", data.decrypted)
                 },
             });
         });

@@ -265,6 +265,11 @@ def view_password():
                 # print("Key: ", key)
 
                 decryption = f.decrypt(encryption)
+
+                # print(decryption.decode())
+                data_dict["decrpyted"] = decryption.decode()
+
+                decryption = f.decrypt(encryption)
                 data_dict["decrpyted"] = decryption.decode()
                 print(data_dict)
         return data_dict

@@ -198,7 +198,7 @@ def add_password():
                 encrypted_pass = data_dict["password"]
                 hashed_master = current_user.password_hash.encode()
 
-                salt = b"Consistent Salt"
+                salt = current_user.username.encode()
 
                 kdf = PBKDF2HMAC(
                 algorithm=hashes.SHA256(),
@@ -247,7 +247,7 @@ def view_password():
                 # print(encryption)
                 hashed_master = current_user.password_hash.encode()
 
-                salt = b"Consistent Salt"
+                salt = current_user.username.encode()
 
                 kdf = PBKDF2HMAC(
                 algorithm=hashes.SHA256(),

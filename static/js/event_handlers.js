@@ -1,6 +1,5 @@
 $(document).ready(function(){
 
-
     $('#generate_password_checkbox').change(function() {
         if(this.checked) {
             document.querySelector("#password").readOnly = true;

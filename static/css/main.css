@@ -1,7 +1,35 @@
 .row {
     display: flex;
+}
+  
+.labels_col, .passwords_col {
+  flex: 50%;
+}
+
+.my-custom-scrollbar {
+  position: relative;
+  height: 200px;
+  overflow: auto;
+}
+
+.table-wrapper-scroll-y {
+  display: block;
+}
+
+/*
+tr {
+  width: 100%;
+  display: inline-table;
+  table-layout: fixed;
   }
   
-  .labels_col, .passwords_col {
-    flex: 50%;
+  table{
+   height:200px;              
   }
+
+  tbody{
+    overflow-y: scroll;      
+    height: 200px;        
+    position: relative;
+  }
+  */

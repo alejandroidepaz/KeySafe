@@ -1,5 +1,6 @@
 $(document).ready(function(){
 
+
     $('#generate_password_checkbox').change(function() {
         if(this.checked) {
             document.querySelector("#password").readOnly = true;
@@ -22,7 +23,18 @@ $(document).ready(function(){
                 form_data.append("password", $("#password").val());
             }
 
+            var csrftoken = $('meta[name=csrf-token]').attr('content')
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                    }
+                }
+            })
+
             $.ajax({
+            
                 type: 'POST',
                 url: '/add_password',
                 data: form_data,

@@ -22,13 +22,13 @@ import pymongo
 import mongodb_config as cfg
 import keyring
 
-from flask_wtf.csrf import CSRFProtect
+from flask_wtf.csrf import CSRFProtect, CSRFError
 
 app = Flask(__name__)
 
 # gets the keyring for the secret key, which is stored by the system's 
 # secure storage eg macos keychain or windows credential locker
-#csrf = CSRFProtect(app)
+csrf = CSRFProtect(app)
 app.secret_key = keyring.get_password("system", "secret_key")
 
 login = LoginManager(app)
@@ -51,6 +51,10 @@ userdb = client.KeySafe # the DB name is Whats_Kraken
 def page_not_found(error):
     flask.session['linkback'] = flask.url_for("index")
     return flask.render_template('404.html'), 404
+
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    return render_template('csrf_error.html', reason=e.description), 400
 
 @login.user_loader
 def load_user(username):
@@ -270,4 +274,4 @@ def view_password():
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
-    #csrf.init_app(app)
+    csrf.init_app(app)

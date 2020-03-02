@@ -2,7 +2,6 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block page_content %}
-
 <div id="add_password_modal" class="text-center">
   <!-- Modal -->
   <div
@@ -34,6 +33,7 @@
           action="/add_password"
           method="POST"
         >
+          <meta name="csrf-token" content="{{ csrf_token() }}">
           <div class="modal-body justify-content-center align-items-center">
             <div class="row" style="display: flex;justify-content: center;">
               <div class="col">

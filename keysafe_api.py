@@ -193,7 +193,7 @@ def add_password():
                         user_data = {"user_data": user_labels["labels"]}
 
                         # ENCRYPTION HERE
-                        if data_dict["generate_password"]:
+                        if data_dict["generate_password"] == "True":
                                 # generate a strong random string to encrypt
                                 password = "some_generated_string"
                         else:
@@ -222,7 +222,7 @@ def add_password():
                         print("Key: ", key)
 
                         userdb.secured_password_data.insert_one({"username":current_user.username, label:encrypted})
-                        
+
                 except Exception as e:
                         print("INSERTION FAILED: ", e)
 

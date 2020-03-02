@@ -191,35 +191,38 @@ def add_password():
                         userdb.user_password_labels.update_one({ "username": current_user.username}, { "$push": { "labels" : label } })
                         user_labels = userdb.user_password_labels.find_one({ "username": current_user.username})
                         user_data = {"user_data": user_labels["labels"]}
-                except Exception as e:
-                        print("INSERTION FAILED: ", e)
 
-                # ENCRYPTION HERE
-                encrypted_pass = data_dict["password"]
-                hashed_master = current_user.password_hash.encode()
+                        # ENCRYPTION HERE
+                        if data_dict["generate_password"]:
+                                # generate a strong random string to encrypt
+                                password = "some_generated_string"
+                        else:
+                                password = data_dict["password"]
+        
+                        hashed_master = current_user.password_hash.encode()
 
-                salt = b"Consistent Salt"
+                        salt = b"Consistent Salt"
 
-                kdf = PBKDF2HMAC(
-                algorithm=hashes.SHA256(),
-                length=32,
-                salt=salt,
-                iterations=100000,
-                backend=default_backend())
-                
-                key = base64.urlsafe_b64encode(kdf.derive(hashed_master))
+                        kdf = PBKDF2HMAC(
+                        algorithm=hashes.SHA256(),
+                        length=32,
+                        salt=salt,
+                        iterations=100000,
+                        backend=default_backend())
+                        
+                        key = base64.urlsafe_b64encode(kdf.derive(hashed_master))
 
-                msg = encrypted_pass.encode()
-                f = Fernet(key)
+                        msg = password.encode()
+                        f = Fernet(key)
 
-                encrypted = f.encrypt(msg)
+                        encrypted = f.encrypt(msg)
 
-                print("WITHIN ADD")
-                print("Encrpytion: ", encrypted)
-                print("Key: ", key)
+                        print("WITHIN ADD")
+                        print("Encrpytion: ", encrypted)
+                        print("Key: ", key)
 
-                try:
                         userdb.secured_password_data.insert_one({"username":current_user.username, label:encrypted})
+                        
                 except Exception as e:
                         print("INSERTION FAILED: ", e)
 

@@ -1,12 +1,26 @@
 $(document).ready(function(){
 
+    $('#generate_password_checkbox').change(function() {
+        if(this.checked) {
+            document.querySelector("#password").readOnly = true;
+        } else{
+            document.querySelector("#password").readOnly = false;
+        }  
+    });
+
     $(function() {
         $('#add_password_btn').click(function() {
 
             var form_data = new FormData();
             var label = $("#label").val();
             form_data.append("label", label );
-            form_data.append("password", $("#password").val() );
+            if ($("#generate_password_checkbox").is(":checked")){
+                form_data.append("generate_password", "True");
+                console.log("password needs to be generated");
+            } else{
+                form_data.append("generate_password", "False");
+                form_data.append("password", $("#password").val());
+            }
 
             $.ajax({
                 type: 'POST',

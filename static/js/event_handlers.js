@@ -43,13 +43,20 @@ $(document).ready(function(){
                 processData: false,
                 success: function(data) {
                     $(".modal-header button").click();
-                    
-                    let label_node = document.createElement("LI");
+
+                    let new_row = document.createElement("tr");
+
+                    var labels_length = document.getElementById("labels_table").rows.length;
+                    let length_node = document.createElement("td");
+                    length_node.innerHTML = labels_length.toString();
+                    new_row.appendChild(length_node)
+
+                    let label_node = document.createElement("td");
                     label_node.innerHTML = label;
                     label_node.id = label;
-                    $("#labels_list").append(label_node);
+                    new_row.appendChild(label_node);
 
-                    let pass_node = document.createElement("LI");
+                    let pass_node = document.createElement("td");
                     let pass_btn_node = document.createElement("button");
                     pass_btn_node.innerHTML = "VIEW PASSWORD";
                     pass_node.id = label;
@@ -57,7 +64,9 @@ $(document).ready(function(){
                     pass_btn_node.type = "button";
                     pass_btn_node.name = label;
                     pass_node.appendChild(pass_btn_node);
-                    $("#passwords_list").append(pass_node);
+                    new_row.appendChild(pass_node);
+
+                    $("#labels_list").append(new_row);
 
                     alert("We've updated your profile with the secured data!")
                 },
@@ -67,12 +76,22 @@ $(document).ready(function(){
 
     $(function() {
 
-        $('#passwords_list').on("click", ".view_password_btn", function() {
+        $('#labels_list').on("click", ".view_password_btn", function() {
 
             let label = this.name;
             var form_data = new FormData();
             form_data.append("label", label);
             console.log(label);
+
+            var csrftoken = $('meta[name=csrf-token]').attr('content')
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                    }
+                }
+            })
 
             $.ajax({
                 type: 'POST',

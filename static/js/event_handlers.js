@@ -67,6 +67,9 @@ $(document).ready(function(){
 
                     $("#labels_list").append(new_row);
 
+                    $("#password").val('');
+                    $("#label").val('');
+
                     alert("We've updated your profile with the secured data!")
                 },
             });

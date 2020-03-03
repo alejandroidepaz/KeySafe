@@ -24,6 +24,8 @@ import keyring
 
 from flask_wtf.csrf import CSRFProtect, CSRFError
 
+from password_generate import generate
+
 app = Flask(__name__)
 
 # gets the keyring for the secret key, which is stored by the system's 
@@ -199,7 +201,7 @@ def add_password():
                         # ENCRYPTION HERE
                         if data_dict["generate_password"] == "True":
                                 # generate a strong random string to encrypt
-                                password = "some_generated_string"
+                                password = generate()
                         else:
                                 password = data_dict["password"]
         

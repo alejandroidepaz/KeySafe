@@ -218,7 +218,7 @@ def add_password():
 
                         encrypted = f.encrypt(msg)
 
-                        userdb.secured_password_data.insert_one({"username":current_user.username, label:encrypted})
+                        userdb.secured_password_data.insert_one({"username":current_user.username, "label":label, "key":encrypted})
 
                 except Exception as e:
                         print("INSERTION FAILED: ", e)
@@ -235,34 +235,28 @@ def view_password():
                 data = request.form
                 data_dict = data.to_dict()
                 label = data_dict["label"]
-                # print("\nLABEL: ", label, "\n")
 
-                elm = userdb.secured_password_data.find({ "username": current_user.username})
-                count = userdb.secured_password_data.find({ "username": current_user.username}).count()
+                key_data = userdb.secured_password_data.find_one({ "username": current_user.username, "label": label})
+                if key_data is not None:
+                        encryption = key_data["key"]
+                        hashed_master = current_user.password_hash.encode()
 
-                for i in range(count):
-                        if label in elm[i]:
-                                encryption = elm[i][label]
-                                break
-                # print(encryption)
-                hashed_master = current_user.password_hash.encode()
+                        salt = b"Consistent Salt"
 
-                salt = b"Consistent Salt"
+                        kdf = PBKDF2HMAC(
+                        algorithm=hashes.SHA256(),
+                        length=32,
+                        salt=salt,
+                        iterations=100000,
+                        backend=default_backend())
+                        
+                        key = base64.urlsafe_b64encode(kdf.derive(hashed_master))
 
-                kdf = PBKDF2HMAC(
-                algorithm=hashes.SHA256(),
-                length=32,
-                salt=salt,
-                iterations=100000,
-                backend=default_backend())
+                        f = Fernet(key)
+
+                        decryption = f.decrypt(encryption)
+                        data_dict["decrypted"] = decryption.decode()
                 
-                key = base64.urlsafe_b64encode(kdf.derive(hashed_master))
-
-                f = Fernet(key)
-
-                decryption = f.decrypt(encryption)
-                data_dict["decrypted"] = decryption.decode()
-
         return data_dict
 
 if __name__ == "__main__":

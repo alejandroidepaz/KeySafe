@@ -64,7 +64,7 @@ def load_user(username):
     user = userdb.user_login_credentials.find_one({"username": username})
 
     if user is not None:
-        found_user = User(user["username"], user["email"], password_hash=user['password'], otp_secret = user["otp_secret"])
+        found_user = User(user["username"], user["email"], password_hash=user['password'], otp_secret = user["otp_secret"], last_token=user["last_token"])
         return found_user
 
     return user
@@ -81,13 +81,13 @@ def login_page():
         form = LoginForm()
         if form.validate_on_submit():
                 user = load_user(str(form.username.data))
-                
-                if user is None or not user.check_password(form.password.data) or not user.verify_totp(form.token.data):
+                if user is None or not user.check_password(form.password.data) or not user.verify_totp(form.token.data) or user.last_token == form.token.data:
                         flash('Invalid username, password or token. Please Try Again.')
                         return redirect(url_for('login_page'))
                 
                 login_user(user)
                 next_page = request.args.get('next')
+                userdb.user_login_credentials.update_one({"username":current_user.username}, {"$set": {"last_token": form.token.data}})
                 if not next_page or url_parse(next_page).netloc != '':
                         next_page = url_for('index')
                 return redirect(next_page)
@@ -100,24 +100,19 @@ def register():
         if current_user.is_authenticated:
                 return redirect(url_for('index'))
 
-        print("not authenticated")
         form = RegistrationForm()
-        print("recieve form")
-        if form.validate_on_submit():
-                print("inside if")
 
+        if form.validate_on_submit():
 
                 user = User(form.username.data, form.email.data)
                 user.set_password(form.password.data)
-                print("after set password")
 
-                userdb.user_login_credentials.insert_one({"username":user.username, "password":user.password_hash, "email":user.email, "otp_secret":user.otp_secret})
+                userdb.user_login_credentials.insert_one({"username":user.username, "password":user.password_hash, "email":user.email, "otp_secret":user.otp_secret, "last_token":""})
                 userdb.user_password_labels.insert_one({"username":user.username, "labels":[]})
-                print("after inserts")
 
                 # redirect to the two-factor auth page, passing username in session
                 session['username'] = user.username
-                print("set session username variable")
+ 
                 return redirect(url_for('two_factor_setup'))
 
         return render_template('registration.html', title='Register', form=form)
@@ -222,10 +217,6 @@ def add_password():
                         f = Fernet(key)
 
                         encrypted = f.encrypt(msg)
-
-                        print("WITHIN ADD")
-                        print("Encrpytion: ", encrypted)
-                        print("Key: ", key)
 
                         userdb.secured_password_data.insert_one({"username":current_user.username, label:encrypted})
 

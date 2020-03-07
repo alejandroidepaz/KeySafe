@@ -6,7 +6,7 @@ import onetimepass
 
 class User(UserMixin):
 
-    def __init__(self, username, email, password_hash=None, otp_secret=None):
+    def __init__(self, username, email, password_hash=None, otp_secret=None, last_token=None):
         self.otp_secret = otp_secret
         if self.otp_secret is None:
             # generate a random secret
@@ -16,6 +16,7 @@ class User(UserMixin):
         self.password_hash = password_hash
         self.email = email
         self.active = True
+        self.last_token = last_token
 
     def is_active(self):
         return self.active

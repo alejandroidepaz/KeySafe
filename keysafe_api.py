@@ -47,7 +47,7 @@ app.config['RECAPTCHA_OPTIONS'] = {'theme':'white'}
 # Establish connection with MongoClient and iniitalize DataBase
 client = MongoClient("mongodb+srv://"+ cfg.mongodb["username"] + ":" + cfg.mongodb["password"] + "@" + cfg.mongodb["host"])
 
-userdb = client.KeySafe # the DB name is Whats_Kraken
+userdb = client.KeySafe # DB name is KeySafe
 
 @app.errorhandler(404)
 def page_not_found(error):

@@ -108,10 +108,10 @@
           </thead>
           <tbody id = "labels_list">
             {% for label in user_data %}
-              <tr id="labels_list_data">
+              <tr id="{{label}}">
                 <td>{{user_data.index(label) + 1}}</td>
-                <td id="{{label}}">{{label}}</td>
-                <td id="{{label}}"><button class="view_password_btn" type="button" name="{{label}}">VIEW PASSWORD</button></td>
+                <td>{{label}}</td>
+                <td><button class="view_password_btn" type="button" name="{{label}}">VIEW PASSWORD</button><button class="del_password_btn" type="button" name="{{label}}">DELETE</button></td>
               </tr>
             {% endfor %}
           </tbody>

@@ -225,6 +225,23 @@ def add_password():
 
         return user_data
 
+@app.route("/delete_password", methods=["GET", "POST"])
+@login_required
+def delete_password():
+        if request.method == "POST":
+                data = request.form
+                data_dict = data.to_dict()
+                label = data_dict["label"]
+                try:
+                        userdb.user_password_labels.update_one({ "username": current_user.username}, {"$pull" : {"labels":label}})
+                        userdb.secured_password_data.delete_one({ "username": current_user.username, "label": label})
+                        result = {"status":"success", "label":label}
+                except Exception as e:
+                        print("DELETION FAILED: ", e)
+                        result = {"status": "failed"}
+        
+        return result
+
 @app.route("/view_password", methods=["GET", "POST"])
 @login_required
 def view_password():

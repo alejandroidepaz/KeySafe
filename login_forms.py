@@ -39,7 +39,7 @@ class RegistrationForm(FlaskForm):
 
         error_messages = {
 
-            "length": "Minimum Length of 10 | ",
+            "length": "Minimum Length of 8 | ",
             "digit": "Minimum 1 Number | ",
             "uppercase": "Minimum 1 Uppercase Letter | ",
             "lowercase": "Minimum 1 Lowercase Letter | ",
@@ -48,7 +48,7 @@ class RegistrationForm(FlaskForm):
         }
         password = password.data
 
-        length_check = len(password) > 9
+        length_check = len(password) > 7
 
         digit_check = re.search(r"[0-9]", password) is not None 
 

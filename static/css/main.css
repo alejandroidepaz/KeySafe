@@ -16,30 +16,6 @@
   display: block;
 }
 
-.view_password_btn{
-  margin-right: 5px;
-  background-color: white;
-  color: black;
-  border: 2px solid #4CAF50; /* Green */
-  transition-duration: 0.4s;
-}
-
-.view_password_btn:hover {
-  background-color: #4CAF50; /* Green */
-  color: white;
-}
-
-.del_password_btn{
-  background-color: white;
-  color: black;
-  border: 2px solid red; /* Green */
-  transition-duration: 0.4s;
-}
-
-.del_password_btn:hover {
-  background-color: red; /* Green */
-  color: white;
-}
 /*
 tr {
   width: 100%;

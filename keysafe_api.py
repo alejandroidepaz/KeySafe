@@ -64,7 +64,27 @@ def load_user(username):
     user = userdb.user_login_credentials.find_one({"username": username})
 
     if user is not None:
-        found_user = User(user["username"], user["email"], password_hash=user['password'], otp_secret = user["otp_secret"], last_token=user["last_token"])
+
+        hashed_master = user["password"].encode()
+
+        salt = b"Consistent Salt"
+
+        kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt,
+        iterations=100000,
+        backend=default_backend())
+        
+        key = base64.urlsafe_b64encode(kdf.derive(hashed_master))
+
+        msg = user["otp_secret"]
+        f = Fernet(key)
+
+        decrypted = f.decrypt(msg)
+        decrypted = decrypted.decode()
+
+        found_user = User(user["username"], user["email"], password_hash=user['password'], otp_secret = decrypted, last_token=user["last_token"])
         return found_user
 
     return user
@@ -107,7 +127,29 @@ def register():
                 user = User(form.username.data, form.email.data)
                 user.set_password(form.password.data)
 
-                userdb.user_login_credentials.insert_one({"username":user.username, "password":user.password_hash, "email":user.email, "otp_secret":user.otp_secret, "last_token":""})
+                print(user.otp_secret)
+
+                hashed_master = user.password_hash.encode()
+
+                salt = b"Consistent Salt"
+
+                kdf = PBKDF2HMAC(
+                algorithm=hashes.SHA256(),
+                length=32,
+                salt=salt,
+                iterations=100000,
+                backend=default_backend())
+                
+                key = base64.urlsafe_b64encode(kdf.derive(hashed_master))
+
+                msg = user.otp_secret.encode()
+                f = Fernet(key)
+
+                encrypted = f.encrypt(msg)
+
+                print(encrypted)              
+
+                userdb.user_login_credentials.insert_one({"username":user.username, "password":user.password_hash, "email":user.email, "otp_secret":encrypted, "last_token":""})
                 userdb.user_password_labels.insert_one({"username":user.username, "labels":[]})
 
                 # redirect to the two-factor auth page, passing username in session

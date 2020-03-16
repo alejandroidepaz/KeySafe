@@ -25,6 +25,7 @@ import keyring
 from flask_wtf.csrf import CSRFProtect, CSRFError
 
 from password_generate import generate
+import gc
 
 app = Flask(__name__)
 
@@ -127,8 +128,6 @@ def register():
                 user = User(form.username.data, form.email.data)
                 user.set_password(form.password.data)
 
-                print(user.otp_secret)
-
                 hashed_master = user.password_hash.encode()
 
                 salt = b"Consistent Salt"
@@ -145,9 +144,7 @@ def register():
                 msg = user.otp_secret.encode()
                 f = Fernet(key)
 
-                encrypted = f.encrypt(msg)
-
-                print(encrypted)              
+                encrypted = f.encrypt(msg)            
 
                 userdb.user_login_credentials.insert_one({"username":user.username, "password":user.password_hash, "email":user.email, "otp_secret":encrypted, "last_token":""})
                 userdb.user_password_labels.insert_one({"username":user.username, "labels":[]})
@@ -298,6 +295,9 @@ def view_password():
 
                         decryption = f.decrypt(encryption)
                         data_dict["decrypted"] = decryption.decode()
+
+                        del decryption
+                        gc.collect()
                 
         return data_dict
 
